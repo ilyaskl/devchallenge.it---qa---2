@@ -1,0 +1,2916 @@
+{
+	"info": {
+		"_postman_id": "da80a7d0-cbab-4957-bc8b-ceb15b2f05b3",
+		"name": "dev challenge 2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Current weather data",
+			"description": "",
+			"item": [
+				{
+					"name": "By city name",
+					"description": "",
+					"item": [
+						{
+							"name": "weather by valid city name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5621a3bc-371e-40c1-83e1-8345f58f637c",
+										"type": "text/javascript",
+										"exec": [
+											"var responseSchema = JSON.parse(responseBody);",
+											"const expectedSchema = {",
+											"    \"type\": \"object\",",
+											"    ",
+											"    \"properties\": {",
+											"    \"coord\": {\"type\": \"object\"},",
+											"    \"weather\": {\"type\": \"array\"},",
+											"    \"base\": {\"type\": \"string\"},",
+											"    \"main\": {\"type\":\"object\"},",
+											"    \"visibility\": {\"type\": \"integer\"},",
+											"    \"wind\": {\"type\":\"object\"},",
+											"    \"clouds\": {\"type\":\"object\"},",
+											"    \"dt\": {\"type\":\"integer\"},",
+											"    \"sys\": {\"type\":\"object\"},",
+											"    \"id\": {\"type\":\"integer\"},",
+											"    \"name\": {\"type\":\"string\"},",
+											"    \"cod\": {\"type\":\"integer\"},",
+											"      }     ",
+											"    };",
+											"",
+											"pm.test(\"status should be ok, response should be json\", function () {",
+											"    pm.response.to.be.ok;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"schema\", function () {",
+											"    var valid = tv4.validate(expectedSchema, responseSchema);",
+											"     pm.expect(valid).to.be.true;",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/weather?q={{city}}&APPID={{apiKey}}",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"weather"
+									],
+									"query": [
+										{
+											"key": "q",
+											"value": "{{city}}"
+										},
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "weather by invalid city name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "8857f704-bc60-4ad1-8e7c-78aff0973108",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be error, response should be json\", function () {",
+											"    pm.response.to.have.status(404);",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"check for error message\", function () {",
+											"    pm.expect(pm.response.json().message).to.equal(\"city not found\");",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/weather?q=@!!!%26*(%26^%$%@^%26*()&APPID={{apiKey}}",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"weather"
+									],
+									"query": [
+										{
+											"key": "q",
+											"value": "@!!!%26*(%26^%$%@^%26*()"
+										},
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "weather by empty city name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "598a57ff-b053-4465-b539-d241da6593b2",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be error, response should be json\", function () {",
+											"    pm.response.to.have.status(400);",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"check for error message\", function () {",
+											"    pm.expect(pm.response.json().message).to.equal(\"Nothing to geocode\");",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/weather?q=&APPID={{apiKey}}",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"weather"
+									],
+									"query": [
+										{
+											"key": "q",
+											"value": ""
+										},
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "weather by valid city & invalid API key",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "bdecf640-f311-4490-851a-8428fddd6a0b",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be error, response should be json\", function () {",
+											"    pm.response.to.have.status(401);",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"check for error message\", function () {",
+											"    pm.expect(pm.response.json().message).to.equal(\"Invalid API key. Please see http://openweathermap.org/faq#error401 for more info.\");",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/weather?q=Berehovo&APPID=qwqwqwqw",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"weather"
+									],
+									"query": [
+										{
+											"key": "q",
+											"value": "Berehovo"
+										},
+										{
+											"key": "APPID",
+											"value": "qwqwqwqw"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "weather by valid city name and country",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "77121154-63b2-443a-abe3-bf5601a09a61",
+										"type": "text/javascript",
+										"exec": [
+											"var responseSchema = JSON.parse(responseBody);",
+											"const expectedSchema = {",
+											"    \"type\": \"object\",",
+											"    ",
+											"    \"properties\": {",
+											"    \"coord\": {\"type\": \"object\"},",
+											"    \"weather\": {\"type\": \"array\"},",
+											"    \"base\": {\"type\": \"string\"},",
+											"    \"main\": {\"type\":\"object\"},",
+											"    \"visibility\": {\"type\": \"integer\"},",
+											"    \"wind\": {\"type\":\"object\"},",
+											"    \"clouds\": {\"type\":\"object\"},",
+											"    \"dt\": {\"type\":\"integer\"},",
+											"    \"sys\": {\"type\":\"object\"},",
+											"    \"id\": {\"type\":\"integer\"},",
+											"    \"name\": {\"type\":\"string\"},",
+											"    \"cod\": {\"type\":\"integer\"},",
+											"      }     ",
+											"    };",
+											"",
+											"pm.test(\"status should be ok, response should be json\", function () {",
+											"    pm.response.to.be.ok;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"schema\", function () {",
+											"    var valid = tv4.validate(expectedSchema, responseSchema);",
+											"     pm.expect(valid).to.be.true;",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/weather?q=Kiev,Ukraine&APPID={{apiKey}}",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"weather"
+									],
+									"query": [
+										{
+											"key": "q",
+											"value": "Kiev,Ukraine"
+										},
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "weather by valid city name and incorrect country",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "8088a2bb-97c2-4f1d-88de-3a629ca4841b",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be error, response should be json\", function () {",
+											"    pm.response.to.have.status(404);",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"check for error message\", function () {",
+											"    pm.expect(pm.response.json().message).to.equal(\"city not found\");",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/weather?q=Kiev,IN&APPID={{apiKey}}",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"weather"
+									],
+									"query": [
+										{
+											"key": "q",
+											"value": "Kiev,IN"
+										},
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "By city ID",
+					"description": "",
+					"item": [
+						{
+							"name": "weather by valid city id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5621a3bc-371e-40c1-83e1-8345f58f637c",
+										"type": "text/javascript",
+										"exec": [
+											"var responseSchema = JSON.parse(responseBody);",
+											"const expectedSchema = {",
+											"    \"type\": \"object\",",
+											"    ",
+											"    \"properties\": {",
+											"    \"coord\": {\"type\": \"object\"},",
+											"    \"weather\": {\"type\": \"array\"},",
+											"    \"base\": {\"type\": \"string\"},",
+											"    \"main\": {\"type\":\"object\"},",
+											"    \"visibility\": {\"type\": \"integer\"},",
+											"    \"wind\": {\"type\":\"object\"},",
+											"    \"clouds\": {\"type\":\"object\"},",
+											"    \"dt\": {\"type\":\"integer\"},",
+											"    \"sys\": {\"type\":\"object\"},",
+											"    \"id\": {\"type\":\"integer\"},",
+											"    \"name\": {\"type\":\"string\"},",
+											"    \"cod\": {\"type\":\"integer\"},",
+											"      }     ",
+											"    };",
+											"",
+											"pm.test(\"status should be ok, response should be json\", function () {",
+											"    pm.response.to.be.ok;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"schema\", function () {",
+											"    var valid = tv4.validate(expectedSchema, responseSchema);",
+											"     pm.expect(valid).to.be.true;",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/weather?id={{cityId}}&APPID={{apiKey}}",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"weather"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "{{cityId}}"
+										},
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "weather by invalid city id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "d99113e6-572e-401d-810f-4889456ddaee",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be error, response should be json\", function () {",
+											"    pm.response.to.have.status(400);",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"check for error message\", function () {",
+											"    pm.expect(pm.response.json().message).to.equal(pm.environment.get(\"invalidCityId\") + \" is not a city ID\");",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/weather?id={{invalidCityId}}&APPID={{apiKey}}",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"weather"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "{{invalidCityId}}"
+										},
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "weather by empty city id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "598a57ff-b053-4465-b539-d241da6593b2",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be error, response should be json\", function () {",
+											"    pm.response.to.have.status(400);",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"check for error message\", function () {",
+											"    pm.expect(pm.response.json().message).to.equal(\"Nothing to geocode\");",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/weather?id=&APPID={{apiKey}}",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"weather"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": ""
+										},
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "weather by valid city id & invalid API key",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "bdecf640-f311-4490-851a-8428fddd6a0b",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be error, response should be json\", function () {",
+											"    pm.response.to.have.status(401);",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"check for error message\", function () {",
+											"    pm.expect(pm.response.json().message).to.equal(\"Invalid API key. Please see http://openweathermap.org/faq#error401 for more info.\");",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/weather?id={{cityId}}&APPID=qwqwqwqw",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"weather"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "{{cityId}}"
+										},
+										{
+											"key": "APPID",
+											"value": "qwqwqwqw"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "By geographic coordinates",
+					"description": "",
+					"item": [
+						{
+							"name": "weather by valid geo coordinates",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "7404d246-ff03-4883-b637-161495a7c512",
+										"type": "text/javascript",
+										"exec": [
+											"var responseSchema = JSON.parse(responseBody);",
+											"const expectedSchema = {",
+											"    \"type\": \"object\",",
+											"    ",
+											"    \"properties\": {",
+											"    \"coord\": {\"type\": \"object\"},",
+											"    \"weather\": {\"type\": \"array\"},",
+											"    \"base\": {\"type\": \"string\"},",
+											"    \"main\": {\"type\": \"object\"},",
+											"    \"visibility\": {\"type\": \"integer\"},",
+											"    \"wind\": {\"type\": \"object\"},",
+											"    \"clouds\": {\"type\": \"object\"},",
+											"    \"dt\": {\"type\": \"integer\"},",
+											"    \"sys\": {\"type\": \"object\"},",
+											"    \"id\": {\"type\": \"integer\"},",
+											"    \"name\": {\"type\": \"string\"},",
+											"    \"cod\": {\"type\": \"integer\"},",
+											"      }     ",
+											"    };",
+											"",
+											"pm.test(\"status should be ok, response should be json\", function () {",
+											"    pm.response.to.be.ok;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"schema\", function () {",
+											"    var valid = tv4.validate(expectedSchema, responseSchema);",
+											"     pm.expect(valid).to.be.true;",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/weather?lat={{validLat}}&lon={{validLon}}&APPID={{apiKey}}",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"weather"
+									],
+									"query": [
+										{
+											"key": "lat",
+											"value": "{{validLat}}"
+										},
+										{
+											"key": "lon",
+											"value": "{{validLon}}"
+										},
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "weather by invalid geo coordinates",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "de38dfaf-ac37-4a01-bfc6-43c662bb72fa",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be error, response should be json\", function () {",
+											"    pm.response.to.be.error;",
+											"    pm.response.to.be.json;",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/weather?lat=swsww&lon=azaza&APPID={{apiKey}}",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"weather"
+									],
+									"query": [
+										{
+											"key": "lat",
+											"value": "swsww"
+										},
+										{
+											"key": "lon",
+											"value": "azaza"
+										},
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "weather by empty geo coordinates",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "8306b9f7-182d-412e-838c-f07593cdba03",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be error, response should be json\", function () {",
+											"    pm.response.to.be.error;",
+											"    pm.response.to.be.json;",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/weather?lat=&lon=&APPID={{apiKey}}",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"weather"
+									],
+									"query": [
+										{
+											"key": "lat",
+											"value": ""
+										},
+										{
+											"key": "lon",
+											"value": ""
+										},
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			]
+		},
+		{
+			"name": "5 day / 3 hour forecast",
+			"description": "",
+			"item": [
+				{
+					"name": "By city name",
+					"description": "",
+					"item": [
+						{
+							"name": "get forecast by valid city name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "855b975c-c6bf-4752-bc49-63f6bcd56861",
+										"type": "text/javascript",
+										"exec": [
+											"var responseSchema = JSON.parse(responseBody);",
+											"const expectedSchema = {",
+											"    \"type\": \"object\",",
+											"    ",
+											"    \"properties\": {",
+											"    \"coord\": {\"type\": \"object\"},",
+											"    \"weather\": {\"type\": \"array\"},",
+											"    \"base\": {\"type\": \"string\"},",
+											"    \"main\": {\"type\":\"object\"},",
+											"    \"visibility\": {\"type\": \"integer\"},",
+											"    \"wind\": {\"type\":\"object\"},",
+											"    \"clouds\": {\"type\":\"object\"},",
+											"    \"dt\": {\"type\":\"integer\"},",
+											"    \"sys\": {\"type\":\"object\"},",
+											"    \"id\": {\"type\":\"integer\"},",
+											"    \"name\": {\"type\":\"string\"},",
+											"    \"cod\": {\"type\":\"integer\"},",
+											"      }     ",
+											"    };",
+											"",
+											"pm.test(\"status should be ok, response should be json\", function () {",
+											"    pm.response.to.be.ok;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"schema\", function () {",
+											"    var valid = tv4.validate(expectedSchema, responseSchema);",
+											"     pm.expect(valid).to.be.true;",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/forecast?q={{city}}&mode=json&APPID={{apiKey}}",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"forecast"
+									],
+									"query": [
+										{
+											"key": "q",
+											"value": "{{city}}"
+										},
+										{
+											"key": "mode",
+											"value": "json"
+										},
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get forecast by invalid city name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "e75a3500-b2ec-4331-bf99-cdbecc3ff7a8",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be error, response should be json\", function () {",
+											"    pm.response.to.have.status(404);",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"check for error message\", function () {",
+											"    pm.expect(pm.response.json().message).to.equal(\"city not found\");",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/forecast?q=@!!!%26*(%26^%$%@^%26*()&mode=json&APPID={{apiKey}}",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"forecast"
+									],
+									"query": [
+										{
+											"key": "q",
+											"value": "@!!!%26*(%26^%$%@^%26*()"
+										},
+										{
+											"key": "mode",
+											"value": "json"
+										},
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get forecast by empty city name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "7eadc68a-8b90-4e74-8faa-0ffc5ca04484",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be error, response should be json\", function () {",
+											"    pm.response.to.have.status(400);",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"check for error message\", function () {",
+											"    pm.expect(pm.response.json().message).to.equal(\"Nothing to geocode\");",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/forecast?q=&mode=json&APPID={{apiKey}}",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"forecast"
+									],
+									"query": [
+										{
+											"key": "q",
+											"value": ""
+										},
+										{
+											"key": "mode",
+											"value": "json"
+										},
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get forecast by valid city name & invalid API key",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "39bc7d1b-4f32-4e38-b02c-6b43ba26207a",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be error, response should be json\", function () {",
+											"    pm.response.to.have.status(401);",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"check for error message\", function () {",
+											"    pm.expect(pm.response.json().message).to.equal(\"Invalid API key. Please see http://openweathermap.org/faq#error401 for more info.\");",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/forecast?q=&mode=json&APPID=qwqwqwqw",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"forecast"
+									],
+									"query": [
+										{
+											"key": "q",
+											"value": ""
+										},
+										{
+											"key": "mode",
+											"value": "json"
+										},
+										{
+											"key": "APPID",
+											"value": "qwqwqwqw"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get forecast by valid city name and country",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "855b975c-c6bf-4752-bc49-63f6bcd56861",
+										"type": "text/javascript",
+										"exec": [
+											"var responseSchema = JSON.parse(responseBody);",
+											"const expectedSchema = {",
+											"    \"type\": \"object\",",
+											"    ",
+											"    \"properties\": {",
+											"    \"coord\": {\"type\": \"object\"},",
+											"    \"weather\": {\"type\": \"array\"},",
+											"    \"base\": {\"type\": \"string\"},",
+											"    \"main\": {\"type\":\"object\"},",
+											"    \"visibility\": {\"type\": \"integer\"},",
+											"    \"wind\": {\"type\":\"object\"},",
+											"    \"clouds\": {\"type\":\"object\"},",
+											"    \"dt\": {\"type\":\"integer\"},",
+											"    \"sys\": {\"type\":\"object\"},",
+											"    \"id\": {\"type\":\"integer\"},",
+											"    \"name\": {\"type\":\"string\"},",
+											"    \"cod\": {\"type\":\"integer\"},",
+											"      }     ",
+											"    };",
+											"",
+											"pm.test(\"status should be ok, response should be json\", function () {",
+											"    pm.response.to.be.ok;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"schema\", function () {",
+											"    var valid = tv4.validate(expectedSchema, responseSchema);",
+											"     pm.expect(valid).to.be.true;",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/forecast?q={{city}},UA&mode=json&APPID={{apiKey}}",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"forecast"
+									],
+									"query": [
+										{
+											"key": "q",
+											"value": "{{city}},UA"
+										},
+										{
+											"key": "mode",
+											"value": "json"
+										},
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get forecast by valid city name and incorrect country",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "27033f41-eac0-487f-ad39-b0ead562d8ba",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be error, response should be json\", function () {",
+											"    pm.response.to.have.status(404);",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"check for error message\", function () {",
+											"    pm.expect(pm.response.json().message).to.equal(\"city not found\");",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/forecast?q={{city}},IN&mode=json&APPID={{apiKey}}",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"forecast"
+									],
+									"query": [
+										{
+											"key": "q",
+											"value": "{{city}},IN"
+										},
+										{
+											"key": "mode",
+											"value": "json"
+										},
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "By city ID",
+					"description": "",
+					"item": [
+						{
+							"name": "get forecast by valid city ID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "bc001d02-2b64-40c8-8125-c2e88105aff8",
+										"type": "text/javascript",
+										"exec": [
+											"var responseSchema = JSON.parse(responseBody);",
+											"const expectedSchema = {",
+											"    \"type\": \"object\",",
+											"    ",
+											"    \"properties\": {",
+											"    \"coord\": {\"type\": \"object\"},",
+											"    \"weather\": {\"type\": \"array\"},",
+											"    \"base\": {\"type\": \"string\"},",
+											"    \"main\": {\"type\":\"object\"},",
+											"    \"visibility\": {\"type\": \"integer\"},",
+											"    \"wind\": {\"type\":\"object\"},",
+											"    \"clouds\": {\"type\":\"object\"},",
+											"    \"dt\": {\"type\":\"integer\"},",
+											"    \"sys\": {\"type\":\"object\"},",
+											"    \"id\": {\"type\":\"integer\"},",
+											"    \"name\": {\"type\":\"string\"},",
+											"    \"cod\": {\"type\":\"integer\"},",
+											"      }     ",
+											"    };",
+											"",
+											"pm.test(\"status should be ok, response should be json\", function () {",
+											"    pm.response.to.be.ok;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"schema\", function () {",
+											"    var valid = tv4.validate(expectedSchema, responseSchema);",
+											"     pm.expect(valid).to.be.true;",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/forecast?APPID={{apiKey}}&id={{cityId}}",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"forecast"
+									],
+									"query": [
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										},
+										{
+											"key": "id",
+											"value": "{{cityId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get forecast by invalid city ID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1030262d-ba99-4b1e-9558-9b6328057c72",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be error, response should be json\", function () {",
+											"    pm.response.to.have.status(400);",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"check for error message\", function () {",
+											"    pm.expect(pm.response.json().message).to.equal(pm.environment.get(\"invalidCityId\") + \" is not a city ID\");",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/forecast?APPID={{apiKey}}&id={{invalidCityId}}",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"forecast"
+									],
+									"query": [
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										},
+										{
+											"key": "id",
+											"value": "{{invalidCityId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get forecast by empty city ID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "b3dc39a2-b23c-48c3-b092-53b791af1b8d",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be error, response should be json\", function () {",
+											"    pm.response.to.have.status(400);",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"check for error message\", function () {",
+											"    pm.expect(pm.response.json().message).to.equal(\"Nothing to geocode\");",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/forecast?APPID={{apiKey}}&id=",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"forecast"
+									],
+									"query": [
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										},
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get forecast by valid city id & invalid API key",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "972c89b6-9fae-43f7-be48-959e0c50b51d",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be error, response should be json\", function () {",
+											"    pm.response.to.have.status(401);",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"check for error message\", function () {",
+											"    pm.expect(pm.response.json().message).to.equal(\"Invalid API key. Please see http://openweathermap.org/faq#error401 for more info.\");",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/forecast?APPID=qwqwqwqw&id={{cityId}}",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"forecast"
+									],
+									"query": [
+										{
+											"key": "APPID",
+											"value": "qwqwqwqw"
+										},
+										{
+											"key": "id",
+											"value": "{{cityId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "e0006665-366d-43bd-a0a8-0e6ce2ed1fd6",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "3312cb0f-4e1f-4499-acac-06b49ac07452",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "By geographic coordinates",
+					"description": "",
+					"item": [
+						{
+							"name": "forecast by valid geo coordinates",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "7404d246-ff03-4883-b637-161495a7c512",
+										"type": "text/javascript",
+										"exec": [
+											"var responseSchema = JSON.parse(responseBody);",
+											"const expectedSchema = {",
+											"    \"type\": \"object\",",
+											"    ",
+											"    \"properties\": {",
+											"    \"coord\": {\"type\": \"object\"},",
+											"    \"weather\": {\"type\": \"array\"},",
+											"    \"base\": {\"type\": \"string\"},",
+											"    \"main\": {\"type\": \"object\"},",
+											"    \"visibility\": {\"type\": \"integer\"},",
+											"    \"wind\": {\"type\": \"object\"},",
+											"    \"clouds\": {\"type\": \"object\"},",
+											"    \"dt\": {\"type\": \"integer\"},",
+											"    \"sys\": {\"type\": \"object\"},",
+											"    \"id\": {\"type\": \"integer\"},",
+											"    \"name\": {\"type\": \"string\"},",
+											"    \"cod\": {\"type\": \"integer\"},",
+											"      }     ",
+											"    };",
+											"",
+											"pm.test(\"status should be ok, response should be json\", function () {",
+											"    pm.response.to.be.ok;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"schema\", function () {",
+											"    var valid = tv4.validate(expectedSchema, responseSchema);",
+											"     pm.expect(valid).to.be.true;",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/forecast?lat={{validLat}}&lon={{validLon}}&APPID={{apiKey}}",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"forecast"
+									],
+									"query": [
+										{
+											"key": "lat",
+											"value": "{{validLat}}"
+										},
+										{
+											"key": "lon",
+											"value": "{{validLon}}"
+										},
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "forecast by invalid geo coordinates",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "de38dfaf-ac37-4a01-bfc6-43c662bb72fa",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be error, response should be json\", function () {",
+											"    pm.response.to.be.error;",
+											"    pm.response.to.be.json;",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/forecast?lat=swsww&lon=azaza&APPID={{apiKey}}",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"forecast"
+									],
+									"query": [
+										{
+											"key": "lat",
+											"value": "swsww"
+										},
+										{
+											"key": "lon",
+											"value": "azaza"
+										},
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "forecast by empty geo coordinates",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "9861a134-5313-42b7-bf10-94cd65e1ae81",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be error, response should be json\", function () {",
+											"    pm.response.to.be.error;",
+											"    pm.response.to.be.json;",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/forecast?lat=&lon&APPID={{apiKey}}",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"forecast"
+									],
+									"query": [
+										{
+											"key": "lat",
+											"value": ""
+										},
+										{
+											"key": "lon",
+											"value": null
+										},
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "463349fe-09cb-450f-b771-96bb448fb2b2",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "efd96d1b-bd25-4e52-bbec-30b0b24894be",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "By ZIP code",
+					"description": "",
+					"item": [
+						{
+							"name": "forecast by valid zip code",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "a206312b-4e16-4cc9-9eca-505003feecb6",
+										"type": "text/javascript",
+										"exec": [
+											"var responseSchema = JSON.parse(responseBody);",
+											"const expectedSchema = {",
+											"    \"type\": \"object\",",
+											"    ",
+											"    \"properties\": {",
+											"    \"coord\": {\"type\": \"object\"},",
+											"    \"weather\": {\"type\": \"array\"},",
+											"    \"base\": {\"type\": \"string\"},",
+											"    \"main\": {\"type\": \"object\"},",
+											"    \"visibility\": {\"type\": \"integer\"},",
+											"    \"wind\": {\"type\": \"object\"},",
+											"    \"clouds\": {\"type\": \"object\"},",
+											"    \"dt\": {\"type\": \"integer\"},",
+											"    \"sys\": {\"type\": \"object\"},",
+											"    \"id\": {\"type\": \"integer\"},",
+											"    \"name\": {\"type\": \"string\"},",
+											"    \"cod\": {\"type\": \"integer\"},",
+											"      }     ",
+											"    };",
+											"",
+											"pm.test(\"status should be ok, response should be json\", function () {",
+											"    pm.response.to.be.ok;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"schema\", function () {",
+											"    var valid = tv4.validate(expectedSchema, responseSchema);",
+											"     pm.expect(valid).to.be.true;",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/forecast?zip={{zipCode}},UA&APPID={{apiKey}}",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"forecast"
+									],
+									"query": [
+										{
+											"key": "zip",
+											"value": "{{zipCode}},UA"
+										},
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "forecast by invalid zip code",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "e25c71a2-fc85-40ad-bd87-93948eadc99d",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be error, response should be json\", function () {",
+											"    pm.response.to.be.error;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"check for error message\", function () {",
+											"    pm.expect(pm.response.json().message).to.equal(\"city not found\");",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/forecast?zip=001100,UA&APPID={{apiKey}}",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"forecast"
+									],
+									"query": [
+										{
+											"key": "zip",
+											"value": "001100,UA"
+										},
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "weather by empty ZIP code",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "d5fd47cf-d89c-4f95-810e-e34b3bb422f0",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be error, response should be json\", function () {",
+											"    pm.response.to.be.error;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"check for error message\", function () {",
+											"    pm.expect(pm.response.json().message).to.equal(\"invalid zip code\");",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "api.openweathermap.org/data/2.5/forecast?zip=,UA&APPID={{apiKey}}",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"2.5",
+										"forecast"
+									],
+									"query": [
+										{
+											"key": "zip",
+											"value": ",UA"
+										},
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			]
+		},
+		{
+			"name": "UV index",
+			"description": "",
+			"item": [
+				{
+					"name": "Call current UV data for one location",
+					"description": "",
+					"item": [
+						{
+							"name": "By geographic coordinates",
+							"description": "",
+							"item": [
+								{
+									"name": "By valid geographic coordinates",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "6d03a760-2922-482f-ba96-286fdf353d68",
+												"type": "text/javascript",
+												"exec": [
+													"var responseSchema = JSON.parse(responseBody);",
+													"const expectedSchema = {",
+													"    \"type\": \"object\",",
+													"    ",
+													"    \"properties\": {",
+													"    \"lat\": {\"type\": \"float\"},",
+													"    \"lon\": {\"type\": \"float\"},",
+													"    \"date_iso\": {\"type\": \"string\"},",
+													"    \"date\": {\"type\": \"integer\"},",
+													"    \"value\": {\"type\": \"float\"},",
+													"      }     ",
+													"    };",
+													"    ",
+													"pm.test(\"schema\", function () {",
+													"    var valid = tv4.validate(expectedSchema, responseSchema);",
+													"     pm.expect(valid).to.be.true;",
+													"});",
+													"",
+													"pm.test(\"status should be ok, response should be json\", function () {",
+													"    pm.response.to.be.ok;",
+													"    pm.response.to.be.json;",
+													"});"
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"body": {},
+										"url": {
+											"raw": "http://api.openweathermap.org/data/2.5/uvi?lat={{validLat}}&lon={{validLon}}&APPID={{apiKey}}",
+											"protocol": "http",
+											"host": [
+												"api",
+												"openweathermap",
+												"org"
+											],
+											"path": [
+												"data",
+												"2.5",
+												"uvi"
+											],
+											"query": [
+												{
+													"key": "lat",
+													"value": "{{validLat}}"
+												},
+												{
+													"key": "lon",
+													"value": "{{validLon}}"
+												},
+												{
+													"key": "APPID",
+													"value": "{{apiKey}}"
+												},
+												{
+													"key": null,
+													"value": null
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "by invalid geo coordinates",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "0d9dabcc-8231-4491-a3f6-830dd3d87811",
+												"type": "text/javascript",
+												"exec": [
+													"pm.test(\"status should be error\",  function () {",
+													"    pm.response.to.be.error;",
+													"});"
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"body": {},
+										"url": {
+											"raw": "http://api.openweathermap.org/data/2.5/uvi?lat=swsww&lon=azaza&APPID={{apiKey}}",
+											"protocol": "http",
+											"host": [
+												"api",
+												"openweathermap",
+												"org"
+											],
+											"path": [
+												"data",
+												"2.5",
+												"uvi"
+											],
+											"query": [
+												{
+													"key": "lat",
+													"value": "swsww"
+												},
+												{
+													"key": "lon",
+													"value": "azaza"
+												},
+												{
+													"key": "APPID",
+													"value": "{{apiKey}}"
+												},
+												{
+													"key": null,
+													"value": null
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "by empty geo coordinates",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "0d9dabcc-8231-4491-a3f6-830dd3d87811",
+												"type": "text/javascript",
+												"exec": [
+													"pm.test(\"status should be error\",  function () {",
+													"    pm.response.to.be.error;",
+													"});"
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"body": {},
+										"url": {
+											"raw": "http://api.openweathermap.org/data/2.5/uvi?lat=&lon=&APPID={{apiKey}}",
+											"protocol": "http",
+											"host": [
+												"api",
+												"openweathermap",
+												"org"
+											],
+											"path": [
+												"data",
+												"2.5",
+												"uvi"
+											],
+											"query": [
+												{
+													"key": "lat",
+													"value": ""
+												},
+												{
+													"key": "lon",
+													"value": ""
+												},
+												{
+													"key": "APPID",
+													"value": "{{apiKey}}"
+												},
+												{
+													"key": null,
+													"value": null
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"_postman_isSubFolder": true
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Call forecast UV data for one location",
+					"description": "",
+					"item": [
+						{
+							"name": "By geographic coordinates",
+							"description": "",
+							"item": [
+								{
+									"name": "By valid geo coordinates",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "6d03a760-2922-482f-ba96-286fdf353d68",
+												"type": "text/javascript",
+												"exec": [
+													"var responseSchema = JSON.parse(responseBody);",
+													"const expectedSchema = {",
+													"    \"type\": \"object\",",
+													"    ",
+													"    \"properties\": {",
+													"    \"lat\": {\"type\": \"float\"},",
+													"    \"lon\": {\"type\": \"float\"},",
+													"    \"date_iso\": {\"type\": \"string\"},",
+													"    \"date\": {\"type\": \"integer\"},",
+													"    \"value\": {\"type\": \"float\"},",
+													"      }     ",
+													"    };",
+													"    ",
+													"pm.test(\"schema\", function () {",
+													"    var valid = tv4.validate(expectedSchema, responseSchema);",
+													"     pm.expect(valid).to.be.true;",
+													"});",
+													"",
+													"pm.test(\"status should be ok, response should be json\", function () {",
+													"    pm.response.to.be.ok;",
+													"    pm.response.to.be.json;",
+													"});"
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"body": {},
+										"url": {
+											"raw": "http://api.openweathermap.org/data/2.5/uvi/forecast?lat={{validLat}}&lon={{validLon}}&APPID={{apiKey}}",
+											"protocol": "http",
+											"host": [
+												"api",
+												"openweathermap",
+												"org"
+											],
+											"path": [
+												"data",
+												"2.5",
+												"uvi",
+												"forecast"
+											],
+											"query": [
+												{
+													"key": "lat",
+													"value": "{{validLat}}"
+												},
+												{
+													"key": "lon",
+													"value": "{{validLon}}"
+												},
+												{
+													"key": "APPID",
+													"value": "{{apiKey}}"
+												},
+												{
+													"key": null,
+													"value": null
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "by invalid geo coordinates",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "0d9dabcc-8231-4491-a3f6-830dd3d87811",
+												"type": "text/javascript",
+												"exec": [
+													"pm.test(\"status should be error\",  function () {",
+													"    pm.response.to.be.error;",
+													"});"
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"body": {},
+										"url": {
+											"raw": "http://api.openweathermap.org/data/2.5/uvi/forecast?lat=swsww&lon=azaza&APPID={{apiKey}}",
+											"protocol": "http",
+											"host": [
+												"api",
+												"openweathermap",
+												"org"
+											],
+											"path": [
+												"data",
+												"2.5",
+												"uvi",
+												"forecast"
+											],
+											"query": [
+												{
+													"key": "lat",
+													"value": "swsww"
+												},
+												{
+													"key": "lon",
+													"value": "azaza"
+												},
+												{
+													"key": "APPID",
+													"value": "{{apiKey}}"
+												},
+												{
+													"key": null,
+													"value": null
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "by empty geo coordinates",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "0d9dabcc-8231-4491-a3f6-830dd3d87811",
+												"type": "text/javascript",
+												"exec": [
+													"pm.test(\"status should be error\",  function () {",
+													"    pm.response.to.be.error;",
+													"});"
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"body": {},
+										"url": {
+											"raw": "http://api.openweathermap.org/data/2.5/uvi/forecast?lat=&lon=&APPID={{apiKey}}",
+											"protocol": "http",
+											"host": [
+												"api",
+												"openweathermap",
+												"org"
+											],
+											"path": [
+												"data",
+												"2.5",
+												"uvi",
+												"forecast"
+											],
+											"query": [
+												{
+													"key": "lat",
+													"value": ""
+												},
+												{
+													"key": "lon",
+													"value": ""
+												},
+												{
+													"key": "APPID",
+													"value": "{{apiKey}}"
+												},
+												{
+													"key": null,
+													"value": null
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"_postman_isSubFolder": true
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Call historical UV data for one location",
+					"description": "",
+					"item": [
+						{
+							"name": "By geographic coordinates",
+							"description": "",
+							"item": [
+								{
+									"name": "by valid geo coordinates",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "05b7c824-6ba5-4592-a715-fe4c482ead02",
+												"type": "text/javascript",
+												"exec": [
+													"var responseSchema = JSON.parse(responseBody);",
+													"const expectedSchema = {",
+													"    \"type\": \"object\",",
+													"    ",
+													"    \"properties\": {",
+													"    \"lat\": {\"type\": \"float\"},",
+													"    \"lon\": {\"type\": \"float\"},",
+													"    \"date_iso\": {\"type\": \"string\"},",
+													"    \"date\": {\"type\": \"integer\"},",
+													"    \"value\": {\"type\": \"float\"},",
+													"      }     ",
+													"    };",
+													"    ",
+													"pm.test(\"schema\", function () {",
+													"    var valid = tv4.validate(expectedSchema, responseSchema);",
+													"     pm.expect(valid).to.be.true;",
+													"});",
+													"",
+													"pm.test(\"status should be ok, response should be json\", function () {",
+													"    pm.response.to.be.ok;",
+													"    pm.response.to.be.json;",
+													"});"
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"body": {},
+										"url": {
+											"raw": "http://api.openweathermap.org/data/2.5/uvi/history?appid={{apiKey}}&lat={{validLat}}&lon={{validLon}}&start=1498049953&end=1498481991",
+											"protocol": "http",
+											"host": [
+												"api",
+												"openweathermap",
+												"org"
+											],
+											"path": [
+												"data",
+												"2.5",
+												"uvi",
+												"history"
+											],
+											"query": [
+												{
+													"key": "appid",
+													"value": "{{apiKey}}"
+												},
+												{
+													"key": "lat",
+													"value": "{{validLat}}"
+												},
+												{
+													"key": "lon",
+													"value": "{{validLon}}"
+												},
+												{
+													"key": "start",
+													"value": "1498049953"
+												},
+												{
+													"key": "end",
+													"value": "1498481991"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "by invalid geo coordinates",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "0173603c-55ca-4f4e-8c73-de12c59d4c72",
+												"type": "text/javascript",
+												"exec": [
+													"pm.test(\"status should be error\",  function () {",
+													"    pm.response.to.be.error;",
+													"});"
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"body": {},
+										"url": {
+											"raw": "http://api.openweathermap.org/data/2.5/uvi/history?appid={{apiKey}}&lat=qwqwqwq&lon=wqqwq&start=1498049953&end=1498481991",
+											"protocol": "http",
+											"host": [
+												"api",
+												"openweathermap",
+												"org"
+											],
+											"path": [
+												"data",
+												"2.5",
+												"uvi",
+												"history"
+											],
+											"query": [
+												{
+													"key": "appid",
+													"value": "{{apiKey}}"
+												},
+												{
+													"key": "lat",
+													"value": "qwqwqwq"
+												},
+												{
+													"key": "lon",
+													"value": "wqqwq"
+												},
+												{
+													"key": "start",
+													"value": "1498049953"
+												},
+												{
+													"key": "end",
+													"value": "1498481991"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "by empty geo coordinates",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "97f6a85b-e787-42f7-b1a7-698fb566d8ab",
+												"type": "text/javascript",
+												"exec": [
+													"pm.test(\"status should be error\",  function () {",
+													"    pm.response.to.be.error;",
+													"});"
+												]
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"body": {},
+										"url": {
+											"raw": "http://api.openweathermap.org/data/2.5/uvi/history?appid={{apiKey}}&lat=&lon=&start=1498049953&end=1498481991",
+											"protocol": "http",
+											"host": [
+												"api",
+												"openweathermap",
+												"org"
+											],
+											"path": [
+												"data",
+												"2.5",
+												"uvi",
+												"history"
+											],
+											"query": [
+												{
+													"key": "appid",
+													"value": "{{apiKey}}"
+												},
+												{
+													"key": "lat",
+													"value": ""
+												},
+												{
+													"key": "lon",
+													"value": ""
+												},
+												{
+													"key": "start",
+													"value": "1498049953"
+												},
+												{
+													"key": "end",
+													"value": "1498481991"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"_postman_isSubFolder": true
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "a082fc45-ea2e-4c13-8c65-d502e82aa3cb",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "d16036d7-a554-46c9-94ab-27cd3210a8c9",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Weather stations",
+			"description": "",
+			"item": [
+				{
+					"name": "Creating station",
+					"description": "",
+					"item": [
+						{
+							"name": "Create station",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "9b287bea-d9f6-4857-bb8c-7b7a45a36dc2",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be ok, response should be json\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.environment.set(\"stationID\", pm.response.json().ID);",
+											"pm.environment.set(\"stationName\", pm.response.json().name);"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"external_id\": \"123\",\r\n    \"name\": \"Test\",\r\n    \"latitude\": 37.76,\r\n    \"longitude\": -122.43,\r\n    \"altitude\":150 \r\n}"
+								},
+								"url": {
+									"raw": "http://api.openweathermap.org/data/3.0/stations?APPID={{apiKey}}",
+									"protocol": "http",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"3.0",
+										"stations"
+									],
+									"query": [
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create station with empty name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "2a3b6849-1846-445d-876d-25fe199091e2",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be error, response should be json\", function () {",
+											"    pm.response.to.be.error;",
+											"    pm.response.to.be.json;",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"external_id\": \"123\",\r\n    \"name\": \"\",\r\n    \"latitude\": 37.76,\r\n    \"longitude\": -122.43,\r\n    \"altitude\":150 \r\n}"
+								},
+								"url": {
+									"raw": "http://api.openweathermap.org/data/3.0/stations?APPID={{apiKey}}",
+									"protocol": "http",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"3.0",
+										"stations"
+									],
+									"query": [
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Creating measurements",
+					"description": "",
+					"item": [
+						{
+							"name": "Create valid measurement",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ada03b05-0a2b-4bdd-99b0-cf18ed0faf7a",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be ok\", function () {",
+											"    pm.response.to.have.status(204);",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\r\n  {\r\n    \"station_id\": \"{{stationID}}\",\r\n    \"dt\": 1479817340,\r\n    \"temperature\": 18.7,\r\n    \"wind_speed\": 1.2,\r\n    \"wind_gust\": 3.4,\r\n    \"pressure\": 1021,\r\n    \"humidity\": 87,\r\n    \"rain_1h\": 2,\r\n    \"clouds\": [\r\n        {\r\n            \"condition\": \"NSC\"\r\n        }\r\n    ]\r\n  }\r\n]"
+								},
+								"url": {
+									"raw": "http://api.openweathermap.org/data/3.0/measurements?APPID={{apiKey}}",
+									"protocol": "http",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"3.0",
+										"measurements"
+									],
+									"query": [
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Get measurements",
+					"description": "",
+					"item": [
+						{
+							"name": "get measurements",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "080dbff4-c427-4616-9d8e-53ec4e4ec8ae",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be ok, response should be json\", function () {",
+											"    pm.response.to.be.ok;",
+											"    pm.response.to.be.json;",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "http://api.openweathermap.org/data/3.0/measurements?station_id={{stationID}}&type=m&limit=100&APPID={{apiKey}}&from=1&to=10000000000000",
+									"protocol": "http",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"3.0",
+										"measurements"
+									],
+									"query": [
+										{
+											"key": "station_id",
+											"value": "{{stationID}}"
+										},
+										{
+											"key": "type",
+											"value": "m"
+										},
+										{
+											"key": "limit",
+											"value": "100"
+										},
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										},
+										{
+											"key": "from",
+											"value": "1"
+										},
+										{
+											"key": "to",
+											"value": "10000000000000"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Get stations",
+					"description": "",
+					"item": [
+						{
+							"name": "get all stations",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ce0cf8f1-6784-4ea2-b39a-9f32dcea1b0f",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be ok, response should be json\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.json;",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "http://api.openweathermap.org/data/3.0/stations?APPID={{apiKey}}",
+									"protocol": "http",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"3.0",
+										"stations"
+									],
+									"query": [
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get station by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "01aaa7ef-278a-4a0d-9811-66cdd31ff735",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be ok, response should be json\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.json;",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "http://api.openweathermap.org/data/3.0/stations/{{stationID}}?APPID={{apiKey}}",
+									"protocol": "http",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"3.0",
+										"stations",
+										"{{stationID}}"
+									],
+									"query": [
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Update station",
+					"description": "",
+					"item": [
+						{
+							"name": "update station",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "979a71f7-50c5-419e-8280-e28df73c7d76",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be ok, response should be json\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"pm.test(\"name from response should equal name from env\", function () {",
+											"    pm.expect(pm.environment.get(\"newStationName\")).to.equal(",
+											"        pm.response.json().name",
+											"    );",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n     \"external_id\": \"SF_UPD001\",\r\n     \"name\": \"{{newStationName}}\",\r\n     \"latitude\": 37.80,\r\n     \"longitude\": -122.47,\r\n     \"altitude\": 143\r\n}"
+								},
+								"url": {
+									"raw": "http://api.openweathermap.org/data/3.0/stations/{{stationID}}?APPID={{apiKey}}",
+									"protocol": "http",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"3.0",
+										"stations",
+										"{{stationID}}"
+									],
+									"query": [
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Delete station",
+					"description": "",
+					"item": [
+						{
+							"name": "delete station",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "7422260d-7567-4f88-9b23-a7f6edb1a2c5",
+										"type": "text/javascript",
+										"exec": [
+											"pm.test(\"status should be 204\", function () {",
+											"    pm.response.to.have.status(204);",
+											"});"
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {},
+								"url": {
+									"raw": "http://api.openweathermap.org/data/3.0/stations/{{stationID}}?APPID={{apiKey}}",
+									"protocol": "http",
+									"host": [
+										"api",
+										"openweathermap",
+										"org"
+									],
+									"path": [
+										"data",
+										"3.0",
+										"stations",
+										"{{stationID}}"
+									],
+									"query": [
+										{
+											"key": "APPID",
+											"value": "{{apiKey}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				}
+			]
+		}
+	]
+}
